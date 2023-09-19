@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Graphosable"
 include(":app")
-include(":graphosable")
+include(":graphosable_lib")
