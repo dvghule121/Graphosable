@@ -3,6 +3,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        mavenLocal()            // << --- ADD This
     }
 }
 dependencyResolutionManagement {
@@ -10,9 +11,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()            // << --- ADD This
     }
 }
 
 rootProject.name = "Graphosable"
 include(":app")
-include(":graphosable")
+include(":graphosable_lib")
