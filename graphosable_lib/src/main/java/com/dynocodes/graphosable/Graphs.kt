@@ -28,6 +28,9 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.log10
@@ -94,10 +97,10 @@ class Graphs {
                     it.nativeCanvas.drawText(slice.label, labelX, labelY, paint)
                     it.nativeCanvas.drawText("Total", centerX, centerY-labeltextSize, paint)
                     paint.textSize = 12.sp.toPx()
-                    it.nativeCanvas.drawText(total.toLong().toString(), centerX, centerY+30, paint)
+                    it.nativeCanvas.drawText("${formatAmount(total.toDouble())}", centerX, centerY+30, paint)
                     val avg = data.sumBy { it.value } / data.size
                     if (slice.value > avg * 0.25) {
-                        it.nativeCanvas.drawText(slice.value.toLong().toString(), labelX, labelY + 50, paint)
+                        it.nativeCanvas.drawText("${formatAmount(slice.value.toDouble())}", labelX, labelY + 50, paint)
                     }
                 }
 
@@ -220,14 +223,16 @@ class Graphs {
         textColor: Int =Color.White.hashCode()
     ) {
         // Calculate the maximum value across all BarData objects
-        var maxValue = barDataList.map { it.value }.maxOrNull()?: 0f
+        var maxValue = barDataList.map { it.value }.maxOrNull()?: 0
 
         maxValue = calculateMagnitude(maxValue)
 
         val padding = 16.dp
         Row(modifier = modifier.fillMaxSize()) {
 
-            Canvas(modifier = Modifier.fillMaxHeight().padding(padding+12.dp, padding, padding, padding)){
+            Canvas(modifier = Modifier
+                .fillMaxHeight()
+                .padding(padding + 12.dp, padding, padding, padding)){
                 drawIntoCanvas {
 
                     val paint = Paint().apply {
@@ -250,7 +255,7 @@ class Graphs {
                     for (i in 0..4) {
                         val value = maxValue * i / 4
                         val y = size.height - padding.toPx() - value * yStep
-                        val text = String.format("%.1f $unit", value)
+                        val text = "${formatAmount(value.toDouble())} $unit"
                         it.nativeCanvas.drawText(text, padding.toPx() - 16.dp.toPx(), y - 8, paint)
                         drawLine(
                             start = Offset(-padding.toPx(), y),
@@ -263,11 +268,15 @@ class Graphs {
 
 
             }
+
+
             Canvas(modifier = modifier
                 .horizontalScroll(rememberScrollState())
+                .requiredWidth(if (barDataList.size < 6) 350.dp else (55 * barDataList.size).dp)
                 .fillMaxHeight()
-                .requiredWidth((55 * barDataList.size).dp)
-                .padding(4.dp, padding)) {
+                .padding(12.dp, padding)
+            )
+            {
                 drawIntoCanvas {
                     val paint = Paint().apply {
                         color = textColor
@@ -282,7 +291,7 @@ class Graphs {
                     for (i in 0..4) {
                         val value = maxValue * i / 4
                         val y = size.height - padding.toPx() - value * yStep
-                        val text = String.format("%.1f $unit", value)
+
 
                         drawLine(
                             start = Offset(-padding.toPx(), y),
@@ -333,7 +342,7 @@ class Graphs {
                     for (i in barDataList.indices) {
                         val x = (i * xStep )
                         val y = size.height - padding.toPx() - barDataList[i].value * yStep
-                        val text = String.format("%.1f", barDataList[i].value)
+                        val text =" ${formatAmount((barDataList[i].value).toDouble())}"
                         val xnew = x + padding.toPx() + 22
                         val ynew = y - 8.dp.toPx()
                         it.nativeCanvas.drawText(text, xnew, ynew, paint)
@@ -344,13 +353,13 @@ class Graphs {
 
     }
 
-    fun calculateMagnitude(value: Float): Float {
-        if (value <= 0f) return 0f // Handle non-positive values
+    fun calculateMagnitude(value: Int): Int {
+        if (value <= 0) return 0 // Handle non-positive values
 
-        val magnitude = 10.0.pow(log10(value.toDouble()).toInt()).toFloat()
+        val magnitude = 10.0.pow(log10(value.toDouble()).toInt())
         val nextMagnitude = magnitude * 10
 
-        return if (value <= magnitude * 5) magnitude else nextMagnitude
+        return if (value <= magnitude * 5) magnitude.toInt() * 5 else nextMagnitude.toInt()
     }
 
     fun generateRandomColor(): Int{
@@ -366,7 +375,7 @@ class Graphs {
  * @property values List of integer values representing data for the bars.
  * @property labels List of strings representing labels for the bars.
  */
-data class BarData(var value: Float, var label: String)
+data class BarData(var value: Int, var label: String)
 
 /**
  * Data class representing a slice in a pie chart.
@@ -376,3 +385,17 @@ data class BarData(var value: Float, var label: String)
  * @property color The color of the slice.
  */
 data class Slice(val value: Int, val label: String = "lol", val color: Int= Graphs().generateRandomColor())
+
+fun formatAmount(amount: Double): String {
+    val formatter = NumberFormat.getNumberInstance(Locale("en", "IN")) as DecimalFormat
+    formatter.applyPattern("#,##,##0.0")
+
+    val formattedAmount = formatter.format(amount)
+
+    // Add abbreviations based on the amount
+    return when {
+        amount >= 10000000 -> (amount / 10000000).toInt().toString() + " Cr"
+        amount >= 100000 -> (amount / 100000).toInt().toString() + " Lakh"
+        else -> formattedAmount
+    }
+}
