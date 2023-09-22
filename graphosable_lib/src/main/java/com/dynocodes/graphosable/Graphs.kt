@@ -388,7 +388,7 @@ data class Slice(val value: Int, val label: String = "lol", val color: Int= Grap
 
 fun formatAmount(amount: Double): String {
     val formatter = NumberFormat.getNumberInstance(Locale("en", "IN")) as DecimalFormat
-    formatter.applyPattern("#,##,##0.0")
+    formatter.applyPattern("#,##,##0")
 
     val formattedAmount = formatter.format(amount)
 
@@ -396,6 +396,7 @@ fun formatAmount(amount: Double): String {
     return when {
         amount >= 10000000 -> (amount / 10000000).toInt().toString() + " Cr"
         amount >= 100000 -> (amount / 100000).toInt().toString() + " Lakh"
+        amount >= 10000 -> (amount / 10000).toInt().toString() + " K"
         else -> formattedAmount
     }
 }

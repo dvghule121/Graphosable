@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                     val list = ArrayList<BarData>()
                     for (i in 1..7) {
-                        list.add(BarData(i* (Random.nextInt(0, 10000000)), "$i"))
+                        list.add(BarData(i* (Random.nextInt(0, 10000)), "$i"))
                     }
                     Graphs().BarChart(barDataList = list, modifier = Modifier)
 
