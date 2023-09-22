@@ -396,7 +396,7 @@ fun formatAmount(amount: Double): String {
     return when {
         amount >= 10000000 -> (amount / 10000000).toInt().toString() + " Cr"
         amount >= 100000 -> (amount / 100000).toInt().toString() + " Lakh"
-        amount >= 10000 -> (amount / 10000).toInt().toString() + " K"
+        amount >= 10000 -> (amount / 1000).toInt().toString() + " K"
         else -> formattedAmount
     }
 }
