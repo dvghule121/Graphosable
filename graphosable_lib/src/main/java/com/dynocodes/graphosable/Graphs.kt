@@ -97,10 +97,10 @@ class Graphs {
                     it.nativeCanvas.drawText(slice.label, labelX, labelY, paint)
                     it.nativeCanvas.drawText("Total", centerX, centerY-labeltextSize, paint)
                     paint.textSize = 12.sp.toPx()
-                    it.nativeCanvas.drawText("${formatAmount(total.toDouble())}", centerX, centerY+30, paint)
+                    it.nativeCanvas.drawText("${formatAmount(total.toDouble(), false)}", centerX, centerY+30, paint)
                     val avg = data.sumBy { it.value } / data.size
                     if (slice.value > avg * 0.25) {
-                        it.nativeCanvas.drawText("${formatAmount(slice.value.toDouble())}", labelX, labelY + 50, paint)
+                        it.nativeCanvas.drawText("${formatAmount(slice.value.toDouble(), false)}", labelX, labelY + 50, paint)
                     }
                 }
 
@@ -232,7 +232,7 @@ class Graphs {
 
             Canvas(modifier = Modifier
                 .fillMaxHeight()
-                .padding(padding + 12.dp, padding, padding, padding)){
+                .padding(padding + 26.dp, padding, padding, padding)){
                 drawIntoCanvas {
 
                     val paint = Paint().apply {
@@ -248,20 +248,20 @@ class Graphs {
                         start = Offset(padding.toPx(), 0f),
                         end = Offset(padding.toPx(), size.height + padding.toPx()),
                         color = Color.Gray,
-                        strokeWidth = 2f
+                        strokeWidth = 1f
                     )
 
                     // Draw points on y-axis
                     for (i in 0..4) {
                         val value = maxValue * i / 4
                         val y = size.height - padding.toPx() - value * yStep
-                        val text = "${formatAmount(value.toDouble())} $unit"
-                        it.nativeCanvas.drawText(text, padding.toPx() - 16.dp.toPx(), y - 8, paint)
+                        val text = "${formatAmount(value.toDouble(), int = true)} $unit"
+                        it.nativeCanvas.drawText(text,  -8f, y - 8, paint)
                         drawLine(
                             start = Offset(-padding.toPx(), y),
                             end = Offset(size.width + padding.toPx(), y),
-                            color = Color.Gray,
-                            strokeWidth = 2f
+                            color = Color(0f,0f,0f,0.1f),
+                            strokeWidth = 1f
                         )
                     }
                 }
@@ -274,7 +274,7 @@ class Graphs {
                 .horizontalScroll(rememberScrollState())
                 .requiredWidth(if (barDataList.size < 6) 350.dp else (55 * barDataList.size).dp)
                 .fillMaxHeight()
-                .padding(12.dp, padding)
+                .padding(8.dp, padding)
             )
             {
                 drawIntoCanvas {
@@ -296,8 +296,8 @@ class Graphs {
                         drawLine(
                             start = Offset(-padding.toPx(), y),
                             end = Offset(size.width + padding.toPx(), y),
-                            color = Color.Gray,
-                            strokeWidth = 2f
+                            color = Color(0f, 0f, 0f, 0.1f),
+                            strokeWidth = 1f
                         )
                     }
 
@@ -342,7 +342,7 @@ class Graphs {
                     for (i in barDataList.indices) {
                         val x = (i * xStep )
                         val y = size.height - padding.toPx() - barDataList[i].value * yStep
-                        val text =" ${formatAmount((barDataList[i].value).toDouble())}"
+                        val text =" ${formatAmount((barDataList[i].value).toDouble(), false)}"
                         val xnew = x + padding.toPx() + 22
                         val ynew = y - 8.dp.toPx()
                         it.nativeCanvas.drawText(text, xnew, ynew, paint)
@@ -386,17 +386,25 @@ data class BarData(var value: Int, var label: String)
  */
 data class Slice(val value: Int, val label: String = "lol", val color: Int= Graphs().generateRandomColor())
 
-fun formatAmount(amount: Double): String {
+fun formatAmount(amount: Double, int: Boolean = false): String {
     val formatter = NumberFormat.getNumberInstance(Locale("en", "IN")) as DecimalFormat
-    formatter.applyPattern("#,##,##0")
+    formatter.applyPattern("#,##,##0.00") // Format with two decimal places
 
     val formattedAmount = formatter.format(amount)
 
     // Add abbreviations based on the amount
+    if (int){
+        return when {
+            amount >= 10000000 -> (amount / 10000000).toInt().toString() + " Cr"
+            amount >= 100000 -> (amount / 100000).toInt().toString() + " Lakh"
+            amount >= 10000 -> (amount / 1000).toInt().toString() + " K"
+            else -> formattedAmount
+        }
+    }
     return when {
-        amount >= 10000000 -> (amount / 10000000).toInt().toString() + " Cr"
-        amount >= 100000 -> (amount / 100000).toInt().toString() + " Lakh"
-        amount >= 10000 -> (amount / 1000).toInt().toString() + " K"
+        amount >= 10000000 -> String.format("%.2f Cr", amount / 10000000)
+        amount >= 100000 -> String.format("%.2f Lakh", amount / 100000)
+        amount >= 1000 -> String.format("%.2f K", amount / 1000)
         else -> formattedAmount
     }
 }

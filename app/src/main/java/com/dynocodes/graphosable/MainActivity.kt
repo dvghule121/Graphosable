@@ -3,11 +3,14 @@ package com.dynocodes.graphosable
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.dynocodes.graphosable.ui.theme.GraphosableTheme
 import kotlin.random.Random
 
@@ -19,7 +22,9 @@ class MainActivity : ComponentActivity() {
             GraphosableTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(350.dp)
 
 
                     ) {
@@ -27,7 +32,13 @@ class MainActivity : ComponentActivity() {
                     for (i in 1..7) {
                         list.add(BarData(i* (Random.nextInt(0, 10000)), "$i"))
                     }
-                    Graphs().BarChart(barDataList = list, modifier = Modifier)
+
+                        Graphs().PieChartWithLabels(data = listOf(Slice(900),Slice(400),Slice(2200)), textColor = Color.Black.hashCode(), context = this@MainActivity)
+//                        Graphs().BarChart(barDataList = list, modifier = Modifier, textColor = Color.Black.hashCode())
+
+
+
+
 
                 }
             }
