@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp)
+                        .height(300.dp)
 
 
                     ) {
@@ -33,8 +33,8 @@ class MainActivity : ComponentActivity() {
                         list.add(BarData(i* (Random.nextInt(0, 10000)), "$i"))
                     }
 
-                        Graphs().PieChartWithLabels(data = listOf(Slice(900),Slice(400),Slice(2200)), textColor = Color.Black.hashCode(), context = this@MainActivity)
-//                        Graphs().BarChart(barDataList = list, modifier = Modifier, textColor = Color.Black.hashCode())
+                        Graphs().PieChartWithLabels(data = listOf(Slice(9000),Slice(900), Slice(900), Slice(400),Slice(2200)), textColor = Color.LightGray.hashCode(), ringSize = 100f, context = this@MainActivity)
+//                        Graphs().BarChart(barDataList = list, modifier = Modifier, textColor = Color.LightGray.hashCode())
 
 
 
