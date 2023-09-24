@@ -60,7 +60,7 @@ class Graphs {
         ringSize: Float = 25f
     ) {
         val total = data.sumBy { it.value }
-        var startAngle = -90f
+        var startAngle = -40f
 
         Canvas(modifier = modifier.padding(8.dp)) {
             val canvasWidth = size.width
@@ -83,7 +83,7 @@ class Graphs {
                 )
 
                 // Calculate the position of the text label
-                val labelRadius = radius * 1.55f
+                val labelRadius = radius * 1.85f
                 val labelX = centerX + labelRadius * cos(Math.toRadians((startAngle + sweepAngle / 2f).toDouble()).toFloat())
                 val labelY = centerY + labelRadius * sin(Math.toRadians((startAngle + sweepAngle / 2f).toDouble()).toFloat())
 
@@ -97,10 +97,10 @@ class Graphs {
                     it.nativeCanvas.drawText(slice.label, labelX, labelY, paint)
                     it.nativeCanvas.drawText("Total", centerX, centerY-labeltextSize, paint)
                     paint.textSize = 12.sp.toPx()
-                    it.nativeCanvas.drawText("${formatAmount(total.toDouble(), false)}", centerX, centerY+30, paint)
+                    it.nativeCanvas.drawText("${formatAmount(total.toDouble(), true)}", centerX, centerY+30, paint)
                     val avg = data.sumBy { it.value } / data.size
                     if (slice.value > avg * 0.25) {
-                        it.nativeCanvas.drawText("${formatAmount(slice.value.toDouble(), false)}", labelX, labelY + 50, paint)
+                        it.nativeCanvas.drawText("${formatAmount(slice.value.toDouble(), false)}", labelX, labelY + 36, paint)
                     }
                 }
 
@@ -232,7 +232,7 @@ class Graphs {
 
             Canvas(modifier = Modifier
                 .fillMaxHeight()
-                .padding(padding + 26.dp, padding, padding, padding)){
+                .padding(padding + 16.dp, padding, padding, padding)){
                 drawIntoCanvas {
 
                     val paint = Paint().apply {
@@ -251,6 +251,8 @@ class Graphs {
                         strokeWidth = 1f
                     )
 
+
+
                     // Draw points on y-axis
                     for (i in 0..4) {
                         val value = maxValue * i / 4
@@ -264,6 +266,14 @@ class Graphs {
                             strokeWidth = 1f
                         )
                     }
+
+                    // Draw the x-axis
+                    drawLine(
+                        start = Offset(-46f, size.height - padding.toPx()),
+                        end = Offset(size.width+padding.toPx(), size.height - padding.toPx()),
+                        color = Color.Gray,
+                        strokeWidth = 2f
+                    )
                 }
 
 
@@ -304,7 +314,7 @@ class Graphs {
 
                     // Draw the x-axis
                     drawLine(
-                        start = Offset(0f, size.height - padding.toPx()),
+                        start = Offset(-64f, size.height - padding.toPx()),
                         end = Offset(size.width, size.height - padding.toPx()),
                         color = Color.Gray,
                         strokeWidth = 2f
@@ -397,14 +407,14 @@ fun formatAmount(amount: Double, int: Boolean = false): String {
         return when {
             amount >= 10000000 -> (amount / 10000000).toInt().toString() + " Cr"
             amount >= 100000 -> (amount / 100000).toInt().toString() + " Lakh"
-            amount >= 10000 -> (amount / 1000).toInt().toString() + " K"
+            amount >= 1000 -> (amount / 1000).toInt().toString() + " K"
             else -> formattedAmount
         }
     }
     return when {
-        amount >= 10000000 -> String.format("%.2f Cr", amount / 10000000)
-        amount >= 100000 -> String.format("%.2f Lakh", amount / 100000)
-        amount >= 1000 -> String.format("%.2f K", amount / 1000)
+        amount >= 10000000 -> String.format("%.1f Cr", amount / 10000000)
+        amount >= 100000 -> String.format("%.1f Lakh", amount / 100000)
+        amount >= 1000 -> String.format("%.1f K", amount / 1000)
         else -> formattedAmount
     }
 }
