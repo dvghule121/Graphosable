@@ -407,14 +407,28 @@ fun formatAmount(amount: Double, int: Boolean = false): String {
         return when {
             amount >= 10000000 -> (amount / 10000000).toInt().toString() + " Cr"
             amount >= 100000 -> (amount / 100000).toInt().toString() + " Lakh"
-            amount >= 1000 -> (amount / 1000).toInt().toString() + " K"
+            amount >= 100 -> (amount / 1000).toInt().toString() + " K"
             else -> formattedAmount
         }
     }
     return when {
         amount >= 10000000 -> String.format("%.1f Cr", amount / 10000000)
         amount >= 100000 -> String.format("%.1f Lakh", amount / 100000)
-        amount >= 1000 -> String.format("%.1f K", amount / 1000)
+        amount >= 100 -> String.format("%.1f K", amount / 1000)
         else -> formattedAmount
     }
 }
+//
+//@RequiresApi(Build.VERSION_CODES.Q)
+//data class BarChartOptions(
+//    val barWidth: Dp = 25.dp,
+//    val drawXAxis: Boolean = true,
+//    val drawYAxis: Boolean = true,
+//    val internalPadding: Dp = 16.dp,
+//    val textSize: TextUnit = 12.sp,
+//    val font: FontFamily? = null, // Specify your custom font
+//    val fontStyle: FontStyle = FontStyle(FontStyle.FONT_WEIGHT_MEDIUM, FontStyle.FONT_SLANT_UPRIGHT),
+//    val barColor: Color = Color.LightGray,
+//    val unit: String = " ",
+//    val textColor: Color = Color.LightGray
+//)
