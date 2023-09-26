@@ -9,7 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.dynocodes.graphosable.ui.theme.GraphosableTheme
 import kotlin.random.Random
@@ -27,17 +26,35 @@ class MainActivity : ComponentActivity() {
                         .height(300.dp)
 
 
-                    ) {
-                    val list = ArrayList<BarData>()
-                    for (i in 1..7) {
-                        list.add(BarData(i* (Random.nextInt(0, 10000)), "$i"))
+                ) {
+
+
+
+                    val list = ArrayList<LineData>()
+                    for (i in 0..4) {
+                        list.add(LineData( "$i", Random.nextInt(0, 10000).toFloat()))
                     }
+//                    SmoothLineChart(values = list)
 
-                        Graphs().PieChartWithLabels(data = listOf(Slice(9000),Slice(900), Slice(900), Slice(400),Slice(2200)), textColor = Color.LightGray.hashCode(), ringSize = 100f, context = this@MainActivity)
+                    LineChart(
+                        lineDataList = list,
+                        modifier = Modifier,
+                        lineChartOptions = LineChartOptions(lineWidth = 50.dp)
+                    )
+
+//                    BarChart(
+//                        barDataList = list, modifier = Modifier, barChartOptions = BarChartOptions(
+//                            barWidth = 25.dp, barSpacing = 15.dp,  textColor = Color.LightGray, drawYAxis = false, drawBarValues = false, drawXAxis = false)
+//                        )
+
+//                    Graphs().LineChart(
+//                        Modifier,
+//                        listOf(20f, 50f, 80f, 70f, 85f, 46f, 35f, 30f),
+//                        listOf("a", "b", "x", "d", "g", "e", "f", "v"),
+//                        ""
+//                    )
+//                        Graphs().PieChartWithLabels(data = listOf(Slice(9000),Slice(900), Slice(900), Slice(400),Slice(2200)), textColor = Color.LightGray.hashCode(), ringSize = 100f, context = this@MainActivity)
 //                        Graphs().BarChart(barDataList = list, modifier = Modifier, textColor = Color.LightGray.hashCode())
-
-
-
 
 
                 }
@@ -45,6 +62,25 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+fun generateParabolicRange(
+    start: Float,
+    end: Float,
+    numPoints: Int
+): List<Float> {
+    require(numPoints >= 2) { "Number of points must be at least 2." }
+
+    val range = mutableListOf<Float>()
+
+    for (i in 0 until numPoints) {
+        val t = i.toFloat() / (numPoints - 1)
+        val value = start + (end - start) * t * t
+        range.add(value)
+    }
+
+    return range
+}
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
