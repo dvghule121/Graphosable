@@ -137,6 +137,7 @@ private fun DrawScope.drawLineChart(
 
 }
 
+@androidx.annotation.RequiresApi(Build.VERSION_CODES.Q)
 private fun DrawScope.drawSmoothLineChart(
     lineDataList: List<LineData>,
     xStep: Float,
@@ -145,7 +146,7 @@ private fun DrawScope.drawSmoothLineChart(
     lineChartOptions: LineChartOptions
 ) {
     val path = Path()
-    val controlFactor = 0.5f // Adjust this value for smoother or sharper curves
+    val controlFactor = 0.7f // Adjust this value for smoother or sharper curves
 
     path.moveTo(
         0f,
@@ -169,14 +170,21 @@ private fun DrawScope.drawSmoothLineChart(
         val y2 = y
 
         path.cubicTo(x1, y1, x2, y2, x, y)
-        drawCircle(color = Color.Blue, radius = 8f, center = Offset(x, y))
+        if (lineChartOptions.drawLineVaues) drawLineValue(
+            x.toInt(),
+            lineDataList[i].value.toInt(),
+            yStep,
+            lineChartOptions = LineChartOptions()
+        )
+        drawCircle(color = lineChartOptions.lineColor, radius = 8f, center = Offset(x, y))
     }
 
     drawPath(
         path = path,
-        color = Color.Blue,
-        style = Stroke(width = 4f, cap = StrokeCap.Round)
+        color = lineChartOptions.lineColor,
+        style = Stroke(width = lineChartOptions.lineStroke.value , cap = StrokeCap.Round)
     )
+
 
     drawXAxisLabels(lineDataList, xStep, lineChartOptions, lineChartOptions.textColor)
 
@@ -206,8 +214,8 @@ private fun DrawScope.drawYAxisLabel(
     lineChartOptions: LineChartOptions
 ) {
     // Draw points on y-axis
-    for (i in 0..4) {
-        val value = maxValue * i / 4
+    for (i in 0 until lineChartOptions.numOfYLabels+1) {
+        val value = maxValue * i / lineChartOptions.numOfYLabels
         val y = size.height - lineChartOptions.internalPadding.toPx() - value * yStep
         val text = "${formatAmount(value.toDouble(), int = false)} ${lineChartOptions.unit}"
 
@@ -252,6 +260,7 @@ private fun DrawScope.drawXAxis(
 
 }
 
+@androidx.annotation.RequiresApi(Build.VERSION_CODES.Q)
 private fun DrawScope.drawBars(
     barDataList: List<BarData>,
     xStep: Float,
@@ -271,29 +280,29 @@ private fun DrawScope.drawBars(
             size = Size(barWidth, barHeight),
             cornerRadius = CornerRadius(12f, 14f)
         )
-        if (barChartOptions.drawBarValues) drawBarValue(
+        if (barChartOptions.drawBarValues) drawLineValue(
             x.toInt(),
             barData.value,
             yStep,
-            barChartOptions
+            lineChartOptions = LineChartOptions()
         )
     }
 }
 
-private fun DrawScope.drawBarValue(
+fun DrawScope.drawLineValue(
     x: Int,
     value: Int,
     yStep: Float,
-    barChartOptions: BarChartOptions
+    lineChartOptions: LineChartOptions
 ) {
-    val y = size.height - barChartOptions.internalPadding.toPx() - value * yStep
+    val y = size.height - lineChartOptions.internalPadding.toPx() - value * yStep
     val text = " ${formatAmount(value.toDouble(), false)}"
     val xnew = x.toFloat() + 4.dp.toPx()
     val ynew = y - 8.dp.toPx()
-    val paint = android.graphics.Paint().apply {
-        color = barChartOptions.textColor.hashCode()
-        textSize = barChartOptions.textSize.toPx()
-        textAlign = android.graphics.Paint.Align.LEFT
+    val paint = Paint().apply {
+        color = lineChartOptions.textColor.hashCode()
+        textSize = lineChartOptions.textSize.toPx()
+        textAlign = Paint.Align.LEFT
     }
     drawContext.canvas.nativeCanvas.drawText(text, xnew, ynew, paint)
 }
@@ -343,7 +352,9 @@ data class LineChartOptions(
     val lineColor: Color = Color.Blue, // Line color
     val lineStroke: Dp = 2.dp,
     val lineWidth: Dp = 10.dp,
-    val lineSpacing: Dp = lineWidth / 2// Width of the line
+    val lineSpacing: Dp = lineWidth / 2,// Width of the line
+    val numOfYLabels : Int = 5,
+    val drawLineVaues : Boolean = false
 )
 
 
