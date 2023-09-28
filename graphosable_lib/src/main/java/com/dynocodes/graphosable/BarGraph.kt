@@ -37,11 +37,18 @@ fun BarChart(
     textColor: Color = Color.White
 ) {
     val maxValue = barDataList.map { it.value }.maxOrNull() ?: 0
-    Row(modifier = modifier.fillMaxSize().padding(top = 24.dp)) {
+    Row(modifier = modifier
+        .fillMaxSize()
+        .padding(top = 24.dp)) {
         Canvas(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(barChartOptions.internalPadding+barChartOptions.internalPadding,0.dp ,barChartOptions.internalPadding, barChartOptions.internalPadding)
+                .padding(
+                    barChartOptions.internalPadding + barChartOptions.internalPadding,
+                    0.dp,
+                    barChartOptions.internalPadding,
+                    barChartOptions.internalPadding
+                )
         ) {
 
             val yStep = (size.height - barChartOptions.internalPadding.toPx() * 2) / maxValue
@@ -54,7 +61,7 @@ fun BarChart(
         Canvas(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
-                .requiredWidth(((barChartOptions.barWidth + barChartOptions.barSpacing) * barDataList.size)+10.dp)
+                .requiredWidth(((barChartOptions.barWidth + barChartOptions.barSpacing) * barDataList.size) + 10.dp)
                 .fillMaxHeight()
                 .padding(0.dp, barChartOptions.internalPadding)
         ) {
@@ -93,14 +100,14 @@ private fun DrawScope.drawYAxisLabel(
     for (i in 0..4) {
         val value = maxValue * i / 4
         val y = size.height - barChartOptions.internalPadding.toPx() - value * yStep
-        val text = "${formatAmount(value.toDouble(), int = true)} ${barChartOptions.unit}"
+        val text = "${formatAmount(value.toDouble(), int = false)} ${barChartOptions.unit}"
 
         val paint = Paint().apply {
             color = barChartOptions.textColor.hashCode()
             textSize = barChartOptions.textSize.toPx()
             textAlign = Paint.Align.CENTER
         }
-        drawContext.canvas.nativeCanvas.drawText(text, 0f, y - 8, paint)
+        if (value != 0) drawContext.canvas.nativeCanvas.drawText(text, 0f, y - 8, paint)
         if (barChartOptions.drawGuideLines) drawGuideLines(barChartOptions, y)
 
     }
@@ -164,7 +171,7 @@ private fun DrawScope.drawBars(
     }
 }
 
-private fun DrawScope.drawBarValue(
+fun DrawScope.drawBarValue(
     x: Int,
     value: Int,
     yStep: Float,
@@ -194,7 +201,7 @@ private fun DrawScope.drawXAxisLabels(
         textAlign = Paint.Align.CENTER
     }
     for ((i, barData) in barDataList.withIndex()) {
-        val x = (  i * xStep) + barChartOptions.barWidth.toPx()
+        val x = (i * xStep) + barChartOptions.barWidth.toPx()
         val label = barData.label
         val xLabel = x
         val yLabel = size.height - barChartOptions.internalPadding.toPx() + 16.dp.toPx()
@@ -221,5 +228,5 @@ data class BarChartOptions(
     val drawBarValues: Boolean = true,
     val drawYLables: Boolean = true,
     val drawXLables: Boolean = true,
-    val barSpacing: Dp = barWidth/2
+    val barSpacing: Dp = barWidth / 2
 )

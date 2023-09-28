@@ -97,7 +97,7 @@ class Graphs {
                     it.nativeCanvas.drawText(slice.label, labelX, labelY, paint)
                     it.nativeCanvas.drawText("Total", centerX, centerY-labeltextSize, paint)
                     paint.textSize = 12.sp.toPx()
-                    it.nativeCanvas.drawText("${formatAmount(total.toDouble(), true)}", centerX, centerY+30, paint)
+                    it.nativeCanvas.drawText("${formatAmount(total.toDouble(), false)}", centerX, centerY+30, paint)
                     val avg = data.sumBy { it.value } / data.size
                     if (slice.value > avg * 0.25) {
                         it.nativeCanvas.drawText("${formatAmount(slice.value.toDouble(), false)}", labelX, labelY + 36, paint)
@@ -398,7 +398,7 @@ data class Slice(val value: Int, val label: String = "lol", val color: Int= Grap
 
 fun formatAmount(amount: Double, int: Boolean = false): String {
     val formatter = NumberFormat.getNumberInstance(Locale("en", "IN")) as DecimalFormat
-    formatter.applyPattern("#,##,##0.00") // Format with two decimal places
+    formatter.applyPattern("#,##,##0") // Format with two decimal places
 
     val formattedAmount = formatter.format(amount)
 

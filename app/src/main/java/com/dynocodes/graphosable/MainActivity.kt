@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.dynocodes.graphosable.ui.theme.GraphosableTheme
 import kotlin.random.Random
@@ -39,7 +40,8 @@ class MainActivity : ComponentActivity() {
                     LineChart(
                         lineDataList = list,
                         modifier = Modifier,
-                        lineChartOptions = LineChartOptions(lineWidth = 50.dp)
+                        lineChartOptions = LineChartOptions(lineWidth = 50.dp, lineColor = Color.Green, lineStroke = 8.dp, numOfYLabels = 2),
+
                     )
 
 //                    BarChart(
