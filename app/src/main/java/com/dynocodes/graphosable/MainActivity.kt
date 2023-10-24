@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.dynocodes.graphosable.ui.theme.GraphosableTheme
-import kotlin.random.Random
 
 
 class MainActivity : ComponentActivity() {
@@ -31,23 +30,23 @@ class MainActivity : ComponentActivity() {
 
 
 
-                    val list = ArrayList<LineData>()
-                    for (i in 0..4) {
-                        list.add(LineData( "$i", Random.nextInt(0, 10000).toFloat()))
+                    val list = ArrayList<BarData>()
+                    for (i in listOf(1,10,100,500,800,300,500,700,800,100,500,500,300)) {
+                        list.add(BarData( i ,"$i"))
                     }
 //                    SmoothLineChart(values = list)
+//
+//                    LineChart(
+//                        lineDataList = list,
+//                        modifier = Modifier,
+//                        lineChartOptions = LineChartOptions(lineWidth = 50.dp, lineColor = Color.Green, lineStroke = 8.dp, numOfYLabels = 2),
+//
+//                    )
 
-                    LineChart(
-                        lineDataList = list,
-                        modifier = Modifier,
-                        lineChartOptions = LineChartOptions(lineWidth = 50.dp, lineColor = Color.Green, lineStroke = 8.dp, numOfYLabels = 2),
-
-                    )
-
-//                    BarChart(
-//                        barDataList = list, modifier = Modifier, barChartOptions = BarChartOptions(
-//                            barWidth = 25.dp, barSpacing = 15.dp,  textColor = Color.LightGray, drawYAxis = false, drawBarValues = false, drawXAxis = false)
-//                        )
+                    BarChart(
+                        barDataList = list, modifier = Modifier, barChartOptions = BarChartOptions(
+                            barWidth = 25.dp, barSpacing = 15.dp,  textColor = Color.LightGray, drawYAxis = false, drawBarValues = false, drawXAxis = false)
+                        )
 
 //                    Graphs().LineChart(
 //                        Modifier,

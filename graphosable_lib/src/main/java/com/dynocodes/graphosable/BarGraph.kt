@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.log10
+import kotlin.math.pow
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -36,7 +38,9 @@ fun BarChart(
     barChartOptions: BarChartOptions = BarChartOptions(),
     textColor: Color = Color.White
 ) {
-    val maxValue = barDataList.map { it.value }.maxOrNull() ?: 0
+    var maxValue = barDataList.map { it.value }.maxOrNull() ?: 0
+    maxValue = calculateMagnitude(maxValue)
+
     Row(modifier = modifier
         .fillMaxSize()
         .padding(top = 24.dp)) {
@@ -107,7 +111,7 @@ private fun DrawScope.drawYAxisLabel(
             textSize = barChartOptions.textSize.toPx()
             textAlign = Paint.Align.CENTER
         }
-        if (value != 0) drawContext.canvas.nativeCanvas.drawText(text, 0f, y - 8, paint)
+        drawContext.canvas.nativeCanvas.drawText(text, 0f, y - 8, paint)
         if (barChartOptions.drawGuideLines) drawGuideLines(barChartOptions, y)
 
     }
@@ -152,7 +156,7 @@ private fun DrawScope.drawBars(
     for ((i, barData) in barDataList.withIndex()) {
         val x = (i * xStep) + barChartOptions.barWidth.toPx() / 2
         val barWidth = barChartOptions.barWidth.toPx()
-        val barHeight = barData.value * yStep
+        val barHeight =( barData.value * yStep)
         drawRoundRect(
             color = barChartOptions.barColor,
             topLeft = Offset(
@@ -188,6 +192,16 @@ fun DrawScope.drawBarValue(
     }
     drawContext.canvas.nativeCanvas.drawText(text, xnew, ynew, paint)
 }
+
+fun calculateMagnitude(value: Int): Int {
+    if (value <= 0) return 0 // Handle non-positive values
+
+    val magnitude = 10.0.pow(log10(value.toDouble()).toInt())
+    val nextMagnitude = magnitude * 10
+
+    return if (value <= magnitude * 5) magnitude.toInt() * 5 else nextMagnitude.toInt()
+}
+
 
 private fun DrawScope.drawXAxisLabels(
     barDataList: List<BarData>,
