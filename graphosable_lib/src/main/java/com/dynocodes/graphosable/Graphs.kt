@@ -364,7 +364,7 @@ class Graphs {
     }
 
     fun calculateMagnitude(value: Int): Int {
-        if (value <= 0) return 0 // Handle non-positive values
+        if (value <= 0) return 1000 // Handle non-positive values
 
         val magnitude = 10.0.pow(log10(value.toDouble()).toInt())
         val nextMagnitude = magnitude * 10

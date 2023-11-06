@@ -47,6 +47,7 @@ fun LineChart(
     textColor: Color = Color.White
 ) {
     var maxValue = lineDataList.maxBy { it.value }.value
+
     maxValue = Graphs().calculateMagnitude(maxValue.toInt()).toFloat()
     Row(
         modifier = modifier
