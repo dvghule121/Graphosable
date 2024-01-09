@@ -19,7 +19,9 @@ To use [Library Name] in your Android project, follow these simple steps:
 2. Add the following dependency to your app module:
 
    ```gradle
-   implementation 'com.example.libraryname:libraryname:1.0.0'
+   dependencies {
+	        implementation 'com.github.dvghule121:Graphosable:v1.1.4'
+	}
    ```
 
 3. Sync your project with Gradle to ensure the library is downloaded and added to your project.
